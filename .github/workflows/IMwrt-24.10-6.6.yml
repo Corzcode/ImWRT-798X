@@ -230,7 +230,8 @@ jobs:
         run: |
           set -e
           cd openwrt
-          make -j$(nproc) V=s || make -j4 V=s || make -j1 V=s
+          #make -j$(nproc) V=s || make -j4 V=s || make -j1 V=s
+          make -j$(nproc) || make -j4 || make -j1 
           echo "status=success" >> $GITHUB_OUTPUT
 
       - if: failure()
