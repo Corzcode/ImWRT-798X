@@ -68,6 +68,7 @@ env:
   WEBDAV_USERNAME: ${{ secrets.WEBDAV_USERNAME }}
   WEBDAV_PASSWORD: ${{ secrets.WEBDAV_PASSWORD }}
   ENABLE_5G_25DB: ${{ github.event.inputs.enable_5g_25db || true }}
+  DELETE_USELESS_FILES: true
 
 jobs:
   check-source-updates:
@@ -123,7 +124,7 @@ jobs:
           echo "5G 25dB：${{ env.ENABLE_5G_25DB }}"
 
       - name: "Optimize disk space"
-        if: !cancelled()
+        if: env.DELETE_USELESS_FILES == 'true' && !cancelled()
         uses: "hugoalh/disk-space-optimizer-ghaction@v0.8.0"
         with:
           operate_sudo: "True"
