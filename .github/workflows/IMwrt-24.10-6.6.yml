@@ -213,7 +213,6 @@ jobs:
           cd openwrt
           chmod +x $GITHUB_WORKSPACE/$DIY_P1_SH $GITHUB_WORKSPACE/$DIY_P2_SH
           $GITHUB_WORKSPACE/$DIY_P1_SH
-          echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.default
           ./scripts/feeds update -a && ./scripts/feeds install -a
           $GITHUB_WORKSPACE/$DIY_P2_SH
 
