@@ -123,7 +123,7 @@ jobs:
           echo "5G 25dB：${{ env.ENABLE_5G_25DB }}"
 
       - name: "Optimize disk space"
-        if: env.DELETE_USELESS_FILES == 'true' && !cancelled()
+        if: !cancelled()
         uses: "hugoalh/disk-space-optimizer-ghaction@v0.8.0"
         with:
           operate_sudo: "True"
