@@ -10,8 +10,8 @@ on:
         type: choice
         required: true
         options:
-          - cmcc_rax3000m
           - cmcc_rax3000m-emmc
+          - cmcc_rax3000m
           - cudy_ap3000-v1
           - cudy_ap3000outdoor-v1
           - cudy_m3000-v1
