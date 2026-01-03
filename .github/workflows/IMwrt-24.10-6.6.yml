@@ -122,6 +122,38 @@ jobs:
           echo "设备型号：${{ matrix.device_model }}"
           echo "5G 25dB：${{ env.ENABLE_5G_25DB }}"
 
+      - name: "Optimize disk space"
+        if: env.DELETE_USELESS_FILES == 'true' && !cancelled()
+        uses: "hugoalh/disk-space-optimizer-ghaction@v0.8.0"
+        with:
+          operate_sudo: "True"
+          general_include: ".+"
+          general_exclude: |-
+            ^GCC$
+            ^G\+\+$
+            Clang
+            LLVM
+          docker_include: ".+"
+          docker_prune: "True"
+          docker_clean: "True"
+          apt_prune: "True"
+          apt_clean: "True"
+          homebrew_prune: "True"
+          homebrew_clean: "True"
+          npm_prune: "True"
+          npm_clean: "True"
+          os_swap: "True"
+
+      - name: 检查磁盘空间
+        run: |
+          MIN_SPACE=25
+          AVAILABLE=$(df -BG . | tail -1 | awk '{print $4}' | sed 's/G//')
+          if [ -z "$AVAILABLE" ] || [ "$AVAILABLE" -lt "$MIN_SPACE" ]; then
+            echo "错误：磁盘空间不足，可用空间 ${AVAILABLE}G，需至少 ${MIN_SPACE}G"
+            exit 1
+          fi
+          echo "可用磁盘空间：${AVAILABLE}G"
+
       - name: 设置设备代码
         run: |
           echo "device_code=${{ matrix.device_model }}" >> $GITHUB_ENV
@@ -175,6 +207,7 @@ jobs:
           cd openwrt
           chmod +x $GITHUB_WORKSPACE/$DIY_P1_SH $GITHUB_WORKSPACE/$DIY_P2_SH
           $GITHUB_WORKSPACE/$DIY_P1_SH
+          echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.default
           ./scripts/feeds update -a && ./scripts/feeds install -a
           $GITHUB_WORKSPACE/$DIY_P2_SH
           make defconfig
@@ -192,7 +225,7 @@ jobs:
 
       - name: 编译固件
         id: compile
-        timeout-minutes: 180
+        timeout-minutes: 240
         run: |
           set -e
           cd openwrt
